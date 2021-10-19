@@ -1,0 +1,11 @@
+.align-left {
+    text-align: left;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.no-padding {
+    padding: 0 0 0 0px;
+}

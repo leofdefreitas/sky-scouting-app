@@ -1,0 +1,98 @@
+<div *ngIf="side===1;else mirrored">
+
+    <hr>
+
+    <!-- SCORE -->
+    <div class="row">
+        <div class="col-sm-11 align-right"><h2>{{teamName}}</h2></div>
+        <div class="col-sm-1 align-left"><h2><b>{{teamScore}}</b></h2></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10"></div>
+        <div class="col-sm-1">
+            <button class="btn btn-success" (click)="changeScore(true)">+</button>
+        </div>
+        <div class="col-sm-1">
+            <button class="btn btn-danger" (click)="changeScore(false)" [disabled]="teamScore === 0">-</button>
+        </div>
+    </div>   
+
+    <hr>
+
+    <!-- EMPTY GOAL -->
+    <div class="row">
+        <div class="col-sm-11 align-right"> 
+            <h3>Empty Goal {{teamName}}?</h3>
+        </div>
+        <div class="col-sm-1 no-padding">
+            <button class="btn" (click)="changeEmptyGoalStatus()"
+                [class.btn-secondary] = "isEmptyGoalOnAir===false"
+                [class.btn-danger] = "isEmptyGoalOnAir===true" >{{emptyGoalOnAirText}}</button> 
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- TIMEOUT -->    
+    <div class="row">
+        <div class="col-sm-11 align-right"> 
+            <h3>Timeout {{teamName}}?</h3>
+        </div>
+        <div class="col-sm-1 no-padding">
+            <button class="btn" (click)="changeTimeoutStatus()"
+                [class.btn-secondary] = "isTimeoutOnAir===false"
+                [class.btn-danger] = "isTimeoutOnAir===true" >{{timeoutOnAirText}}</button> 
+        </div>
+    </div>
+</div>
+
+<ng-template #mirrored>
+
+    <hr>
+
+    <!-- MIRRORED SCORE -->
+    <div class="row">
+        <div class="col-sm-1 align-right"><h2><b>{{teamScore}}</b></h2></div>
+        <div class="col-sm-11 align-left"><h2>{{teamName}}</h2></div>
+    </div>  
+    <div class="row">
+        <div class="col-sm-1">
+            <button class="btn btn-success" (click)="changeScore(true)">+</button>
+        </div>
+        <div class="col-sm-1">
+            <button class="btn btn-danger" (click)="changeScore(false)" [disabled]="teamScore === 0">-</button>
+        </div>
+        <div class="col-sm-10">
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- MIRRORED EMPTY GOAL -->
+    <div class="row">
+        <div class="col-sm-1">
+            <button class="btn" (click)="changeEmptyGoalStatus()"
+                [class.btn-secondary] = "isEmptyGoalOnAir===false"
+                [class.btn-danger] = "isEmptyGoalOnAir===true" >{{emptyGoalOnAirText}}</button> 
+        </div>
+        <div class="col-sm-11 align-left"> 
+            <h3 style="margin-left:20px">Empty Goal {{teamName}}?</h3>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- MIRRORED TIMEOUT -->    
+    <div class="row">
+        <div class="col-sm-1">
+            <button class="btn" (click)="changeTimeoutStatus()"
+                [class.btn-secondary] = "isTimeoutOnAir===false"
+                [class.btn-danger] = "isTimeoutOnAir===true" >{{timeoutOnAirText}}</button> 
+        </div>
+        <div class="col-sm-11 align-left"> 
+            <h3 style="margin-left:20px">Timeout {{teamName}}?</h3>
+        </div>
+    </div>
+</ng-template>
+
+<hr>
