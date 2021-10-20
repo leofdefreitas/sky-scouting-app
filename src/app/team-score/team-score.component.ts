@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { ClockI } from '../app.component';
 
 @Component({
 	selector: 'app-team-score',
@@ -11,13 +12,16 @@ export class TeamScoreComponent implements OnInit {
 
 	@Input() teamName: string = "";
 	@Input() side: number = 1;
+	@Input() penalties: ClockI[];
 	@Output() updateScore = new EventEmitter();
 	@Output() updateEmptyGoal = new EventEmitter();
+	@Output() updatePenalty = new EventEmitter();
 	teamScore = 0;
 	isEmptyGoalOnAir: boolean = false;
 	isTimeoutOnAir: boolean = false;
 	emptyGoalOnAirText: string = "No"
 	timeoutOnAirText: string = "No"
+	
 
 
 	ngOnInit(): void {
@@ -42,6 +46,16 @@ export class TeamScoreComponent implements OnInit {
 		this.isTimeoutOnAir = !this.isTimeoutOnAir
 		this.timeoutOnAirText = this.isTimeoutOnAir ? "Yes" : "No"
 		this.updateEmptyGoal.emit(this.isTimeoutOnAir)
+	}
+
+	changePenaltyStatus(i: number) {
+		this.penalties[i].running = 1;
+		this.updatePenalty.emit(
+			{ 
+				penalty: this.penalties[i], 
+				index: i
+			}
+		)
 	}
 
 }

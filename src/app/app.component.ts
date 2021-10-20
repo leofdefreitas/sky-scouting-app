@@ -3,26 +3,59 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { timer } from 'rxjs'
 import * as moment from 'moment';
 
+export interface ClockI {
+	type: string | number;
+	seconds: number;
+	limit: number;
+	running: number;
+	active: number;
+	direction: number;
+}
+
+export interface ScoreI {
+	type: string;
+	scoreHome: number;
+	scoreAway: number;
+}
+
+export interface OnScreenInfoI {
+	type: number;
+	active: number;
+}
+
+export interface ScoreClockI {
+	matchId: number | null;
+	timestamp: string | null;
+	data: DataObjectI;
+}
+
+export interface DataObjectI {
+	mainClock: ClockI;
+	penalties: ClockI[];
+	score: ScoreI;
+	teamTimeout: OnScreenInfoI[];
+	emptyGoal: OnScreenInfoI[];
+}
+
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.css']
-})
+})	
 
 export class AppComponent {
-	
-	headers_object: HttpHeaders = new HttpHeaders();
 
-	matchId: String | null = '13111995';
-	matchIsLoaded: boolean = true;
+	penaltyTime: number = 120;
+	headers_object: HttpHeaders = new HttpHeaders();
+	matchId: string;
+	matchIsLoaded: boolean = false;
 	isClockRunning: boolean = false;
 	gameTime: number = 0;
 	gameTimeDisplayed = "00:00";
 	clockText = "Start";
 	timeRunning: number = 0;
 	needsUpdate: boolean = false;
-
-	scoreClock: any = {
+	scoreClock: ScoreClockI = {
 		matchId: null,
 		timestamp: null,
 		data: {
@@ -35,6 +68,13 @@ export class AppComponent {
 				direction: 1
 			},
 			penalties: [{
+				type: 1,
+				seconds: 0,
+				limit: 0,
+				running: 0,
+				active: 0,
+				direction: -1
+			}, {
 				type: 2,
 				seconds: 0,
 				limit: 0,
@@ -64,13 +104,6 @@ export class AppComponent {
 				direction: -1
 			}, {
 				type: 6,
-				seconds: 0,
-				limit: 0,
-				running: 0,
-				active: 0,
-				direction: -1
-			}, {
-				type: 1,
 				seconds: 0,
 				limit: 0,
 				running: 0,
@@ -109,6 +142,7 @@ export class AppComponent {
 			this.timeRunning++;
 			this.needsUpdate = this.timeRunning % 2 === 0  ? true : false
 			if (this.isClockRunning) {
+				/** MAIN CLOCK */
 				if (this.gameTime+1 === 30*60 ||
 					this.gameTime+1 === 60*60 ||
 					this.gameTime+1 === 75*60 ||
@@ -117,6 +151,17 @@ export class AppComponent {
 					}
 				this.gameTime++;
 				this.gameTimeDisplayed = this.getDisplayedGameTime(this.gameTime);
+
+				/** PENALTIES CLOCKS */
+				for (let penalty of this.scoreClock.data.penalties) {
+					if (penalty.running) {
+						penalty.seconds++;
+					}
+					if (penalty.seconds === this.penaltyTime) {
+						penalty.running = 0;
+						penalty.seconds = 0;
+					}
+				}
 			}
 			if (this.needsUpdate && this.matchIsLoaded) {
 				this.sendUpdateToServer();
@@ -126,11 +171,11 @@ export class AppComponent {
 
 	loadMatch() {
 		this.matchIsLoaded = true;
-		this.scoreClock.matchId = parseInt(this.scoreClock.matchId)
+		this.scoreClock.matchId = parseInt(this.matchId)
 	}
 
 	updateScore($event: boolean, team: number) {
-		if (team == 1) {
+		if (team === 1) {
 			this.scoreClock.data.score.scoreHome = parseInt($event.toString());
 		} else {
 			this.scoreClock.data.score.scoreAway = parseInt($event.toString());
@@ -139,11 +184,16 @@ export class AppComponent {
 	}
 
 	updateEmptyGoal($event: boolean, team: number) {
-		if (team == 1) {
+		if (team === 1) {
 			this.scoreClock.data.emptyGoal[0].active = $event === true ? 1 : 0;
 		} else {
 			this.scoreClock.data.emptyGoal[1].active = $event === true ? 1 : 0;
 		}
+		this.sendUpdateToServer();
+	}
+
+	updatePenalty ($event: {penalty: ClockI, index: number}) {
+		this.scoreClock.data.penalties[$event.index] = $event.penalty;
 		this.sendUpdateToServer();
 	}
 
@@ -176,8 +226,7 @@ export class AppComponent {
 
 	sendUpdateToServer() {
 		this.scoreClock.timestamp = moment().format("DD-MM-YYYY HH:mm:ss.SSS");
-		console.log(this.scoreClock)
-		/* let httpOptions = {
+		let httpOptions = {
 			headers: new HttpHeaders({
 				"Content-Type":  "application/json",
 				"Authorization": `Basic ${btoa('skyAssignment:p0wer_overWhelm1ng')}`,
@@ -187,6 +236,6 @@ export class AppComponent {
 			console.log(res)
 		}, err => {
 			console.log(err)
-		}) */
+		})
 	}
 }

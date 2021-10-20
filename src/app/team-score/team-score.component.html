@@ -4,15 +4,15 @@
 
     <!-- SCORE -->
     <div class="row">
-        <div class="col-sm-11 align-right"><h2>{{teamName}}</h2></div>
-        <div class="col-sm-1 align-left"><h2><b>{{teamScore}}</b></h2></div>
+        <div class="col-sm-8 align-right"><h2>{{teamName}}</h2></div>
+        <div class="col-sm-2 align-left"><h2><b>{{teamScore}}</b></h2></div>
+        <div class="col-sm-2">
+            <button class="btn btn-success" (click)="changeScore(true)">+</button>
+        </div>
     </div>
     <div class="row">
         <div class="col-sm-10"></div>
-        <div class="col-sm-1">
-            <button class="btn btn-success" (click)="changeScore(true)">+</button>
-        </div>
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <button class="btn btn-danger" (click)="changeScore(false)" [disabled]="teamScore === 0">-</button>
         </div>
     </div>   
@@ -21,10 +21,10 @@
 
     <!-- EMPTY GOAL -->
     <div class="row">
-        <div class="col-sm-11 align-right"> 
-            <h3>Empty Goal {{teamName}}?</h3>
+        <div class="col-sm-10 align-right"> 
+            <h5>Empty Goal {{teamName}}?</h5>
         </div>
-        <div class="col-sm-1 no-padding">
+        <div class="col-sm-2 no-padding">
             <button class="btn" (click)="changeEmptyGoalStatus()"
                 [class.btn-secondary] = "isEmptyGoalOnAir===false"
                 [class.btn-danger] = "isEmptyGoalOnAir===true" >{{emptyGoalOnAirText}}</button> 
@@ -35,13 +35,31 @@
 
     <!-- TIMEOUT -->    
     <div class="row">
-        <div class="col-sm-11 align-right"> 
-            <h3>Timeout {{teamName}}?</h3>
+        <div class="col-sm-10 align-right"> 
+            <h5>Timeout {{teamName}}?</h5>
         </div>
-        <div class="col-sm-1 no-padding">
+        <div class="col-sm-2 no-padding">
             <button class="btn" (click)="changeTimeoutStatus()"
                 [class.btn-secondary] = "isTimeoutOnAir===false"
                 [class.btn-danger] = "isTimeoutOnAir===true" >{{timeoutOnAirText}}</button> 
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- PENALTIES -->
+    <div class="row" *ngFor="let i of [0, 1, 2]">
+        <div class="col-sm-4">
+            <app-clock [timeInSeconds]="120-penalties[i].seconds"></app-clock>
+        </div>
+        <div class="col-sm-6 align-right">
+            <h5>Penalty ({{i+1}})</h5>
+        </div>
+        <div class="col-sm-2 no-padding">
+            <button class="btn" (click)="changePenaltyStatus(i)"
+                [class.btn-secondary] = "penalties[i].running===0"
+                [class.btn-danger] = "penalties[i].running===1"
+                [disabled]="penalties[i].running===1">Start</button> 
         </div>
     </div>
 </div>
@@ -52,15 +70,15 @@
 
     <!-- MIRRORED SCORE -->
     <div class="row">
-        <div class="col-sm-1 align-right"><h2><b>{{teamScore}}</b></h2></div>
-        <div class="col-sm-11 align-left"><h2>{{teamName}}</h2></div>
+        <div class="col-sm-2">  
+            <button class="btn btn-success align-left" (click)="changeScore(true)">+</button>
+        </div>
+        <div class="col-sm-2 align-right"><h2><b>{{teamScore}}</b></h2></div>
+        <div class="col-sm-8 align-left"><h2>{{teamName}}</h2></div>
     </div>  
     <div class="row">
-        <div class="col-sm-1">
-            <button class="btn btn-success" (click)="changeScore(true)">+</button>
-        </div>
-        <div class="col-sm-1">
-            <button class="btn btn-danger" (click)="changeScore(false)" [disabled]="teamScore === 0">-</button>
+        <div class="col-sm-2">
+            <button class="btn btn-danger align-right" (click)="changeScore(false)" [disabled]="teamScore === 0">-</button>
         </div>
         <div class="col-sm-10">
         </div>
@@ -70,13 +88,13 @@
 
     <!-- MIRRORED EMPTY GOAL -->
     <div class="row">
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <button class="btn" (click)="changeEmptyGoalStatus()"
                 [class.btn-secondary] = "isEmptyGoalOnAir===false"
                 [class.btn-danger] = "isEmptyGoalOnAir===true" >{{emptyGoalOnAirText}}</button> 
         </div>
-        <div class="col-sm-11 align-left"> 
-            <h3 style="margin-left:20px">Empty Goal {{teamName}}?</h3>
+        <div class="col-sm-10 align-left"> 
+            <h5 style="margin-left:20px">Empty Goal {{teamName}}?</h5>
         </div>
     </div>
 
@@ -84,13 +102,31 @@
 
     <!-- MIRRORED TIMEOUT -->    
     <div class="row">
-        <div class="col-sm-1">
+        <div class="col-sm-2">
             <button class="btn" (click)="changeTimeoutStatus()"
                 [class.btn-secondary] = "isTimeoutOnAir===false"
                 [class.btn-danger] = "isTimeoutOnAir===true" >{{timeoutOnAirText}}</button> 
         </div>
-        <div class="col-sm-11 align-left"> 
-            <h3 style="margin-left:20px">Timeout {{teamName}}?</h3>
+        <div class="col-sm-10 align-left"> 
+            <h5 style="margin-left:20px">Timeout {{teamName}}?</h5>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- MIRRORED PENALTIES -->
+    <div class="row" *ngFor="let i of [3, 4, 5]">
+        <div class="col-sm-2">
+            <button class="btn" (click)="changePenaltyStatus(i)"
+                [class.btn-secondary] = "penalties[i].running===0"
+                [class.btn-danger] = "penalties[i].running===1"
+                [disabled]="penalties[i].running===1">Start</button> 
+        </div>
+        <div class="col-sm-6 align-left">
+            <h5>Penalty ({{i-2}})</h5>
+        </div>
+        <div class="col-sm-4">
+            <app-clock [timeInSeconds]="120-penalties[i].seconds"></app-clock>
         </div>
     </div>
 </ng-template>

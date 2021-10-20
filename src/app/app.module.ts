@@ -6,11 +6,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { TeamScoreComponent } from './team-score/team-score.component';
+import { ClockComponent } from './clock/clock.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TeamScoreComponent
+    TeamScoreComponent,
+    ClockComponent
   ],
   imports: [
     BrowserModule,
